@@ -1,0 +1,197 @@
+<app-header></app-header>
+<div class ="container-fluid" id="outerdiv">  
+    <div style="margin-top: 40px">
+        <div *ngIf="showIcon">
+            <i class="fa fa-angle-double-down" id="iconDown" (click)="scrollDown()" style="float:right; font-size:60px ;color:white" ></i>
+        </div>
+        <div class="container row d-flex justify-content-center h-100" style="margin-left:12%;">
+            <div class="col">
+                <div class="card bg-light " style="margin-top:60%">
+                    <br><br>
+                    <h5> Your daily efforts details will be shown in Daily Report. </h5>  
+                    <button type="button" id ='dailyReport' (click)="getDailyReport()" class="btn btn-success">Daily Report</button>
+                </div> 
+            </div>
+            <div class="col">                
+                <div class="card bg-light" style="margin-top:60%">
+                    <br><br>
+                    <h5> Your weekly efforts details will be shown in weekly Report. </h5>  
+                    <button type="button" id ='weeklyReport' (click)="getWeeklyReport()" class="btn btn-warning">Weekly Report</button>
+                </div> 
+            </div>
+            <div class="col">                
+                <div class="card bg-light" style="margin-top:60%">
+                    <br><br>
+                    <h5> Your monthly efforts details will be shown in Monthly Report. </h5>  
+                    <button type="button" id ='monthlyReport' (click)="getMonthlyReport()" class="btn btn-primary">Monthly Report</button>
+                </div>
+            </div>
+
+            
+        </div>
+
+        <!-- Shows DailyReport data -->
+    
+        <div *ngIf="findData; then thenBlock else elseBlock"></div>
+        <ng-template #thenBlock>
+        <div *ngIf="showDailyData" id="secondDiv">
+        <div id= "classResult" style="margin-top:25%">
+        <table *ngIf="arrDailyReportData" class="center table hoverTable">
+        <!-- ADD HEADERS  -->
+        <tr>
+            <th colspan="5"> Daily Workout Report</th>
+        </tr>
+        <tr>
+            <th>Workout Plan</th>
+            <th>Activity name</th>
+            <th>Time taken(sec)</th>
+            <th>Cal_burnt</th>
+            
+        </tr>
+    
+        <!-- BIND ARRAY TO TABLE  -->
+        
+        <tr *ngFor="let data of arrDailyReportData">
+                
+            <td>{{data.workout_plan}}</td>
+            <td>{{data.activity_name}}</td>
+            <td>{{data.time_taken}}</td>
+            <td>{{data.cal_burnt}}</td>
+            
+        </tr>
+
+        
+         <tr *ngFor="let data of arrSumDailyReportData" id="total"> 
+               
+            <td colspan="2">Total</td>
+            
+            <td>{{data.time_taken}}</td>
+            <td>{{data.cal_burnt}}</td>
+            
+        </tr>
+    </table>
+    </div>
+    <div id="innerDiv">
+            <button class="btn btn-danger" (click)="printReport()" id="generateReport">Print</button> 
+            <button class="btn btn-info" id="generateGraph" (click)="show()">Generate Graph</button>
+            <i class="fa fa-angle-double-up" (click)="scrollUp()" style="float:right; font-size:60px ;color:white" ></i>
+    </div>
+    
+    </div>     
+    </ng-template>
+
+    <ng-template #elseBlock>
+            <div *ngIf="showDailyData" id="secondDiv" style="margin-top:5%">
+                <h1 style="padding-bottom :50px;color:black;text-align:center"> You have'nt done any exercise today!!</h1>
+            </div>
+    </ng-template>
+      
+    <!-- Div for showing Weekly Data -->
+    
+    <div *ngIf="findWeeklyData; then thenWeeklyBlock else elseWeeklyBlock"></div>
+    <ng-template #thenWeeklyBlock>
+    <div  *ngIf="showWeeklyData" >
+        <div id= "classResult" style="margin-top:20%">
+            <table *ngIf="arrWeeklyReportData" class="center table hoverTable">
+                <!--ADD HEADERS -->
+                <tr>
+                    <th colspan="5">Weekly Workout Report</th>
+                </tr>
+                <tr>
+                    <th>Workout Plan</th>
+                    <th>Activity name</th>
+                    <th>Time taken(sec)</th>
+                    <th>Cal_burnt</th>
+                    <th>Date</th>
+                    
+                </tr>
+            
+                <!-- BIND ARRAY TO TABLE -->
+                <tr *ngFor="let data of arrWeeklyReportData">
+                    <td>{{data.workout_plan}}</td>
+                    <td>{{data.activity_name}}</td>
+                    <td>{{data.time_taken}}</td>
+                    <td>{{data.cal_burnt}}</td>
+                    <td>{{data.date}}</td>
+                </tr>
+                
+                <tr *ngFor="let data of arrSumWeeklyReportData" id="total">
+                
+                    <td colspan="2">Total</td>
+                    <td>{{data.time_taken}}</td>
+                    <td>{{data.cal_burnt}}</td>
+                    <td></td>
+                </tr>
+            </table>
+        </div>
+            <div id ="innerDiv">
+                <button class="btn btn-danger" (click)="printReport()" id="generateReport">Print</button> 
+                <button class="btn btn-info" id="generateGraph" (click)="show()">Generate Graph</button>
+                <i class="fa fa-angle-double-up" (click)="scrollUp()" style="float:right; font-size:60px ;color:white" ></i>
+            </div>
+                     
+        </div>
+    </ng-template>
+
+    <ng-template #elseWeeklyBlock>
+            <div *ngIf="showWeeklyData"  style="margin-top:5%">
+                <h1 style="padding-bottom :50px;color:black;text-align:center"> You have'nt done any exercise today!!</h1>
+            </div>
+    </ng-template>
+    
+        <!-- Div for Showing Monthly Data -->
+    
+        <div *ngIf="findMonthlyData; then thenMonthlyBlock else elseMonthlyBlock"></div>
+        <ng-template #thenMonthlyBlock>    
+        <div  *ngIf="showMonthlyData">
+            <div id= "classResult" style="margin-top:20%">
+            <table *ngIf="arrMonthlyReportData" class="center table hoverTable">
+                <!--ADD HEADERS -->
+                <tr>
+                    <th colspan="5">Monthly Workout Report</th>
+                </tr>
+                <tr>
+                    <th>Workout Plan</th>
+                    <th>Activity name</th>
+                    <th>Time taken(sec)</th>
+                    <th>Cal_burnt</th>
+                    <th>Date</th>
+                    
+                </tr>
+            
+                <!-- BIND ARRAY TO TABLE -->
+                <tr *ngFor="let data of arrMonthlyReportData">
+                    <td>{{data.workout_plan}}</td>
+                    <td>{{data.activity_name}}</td>
+                    <td>{{data.time_taken}}</td>
+                    <td>{{data.cal_burnt}}</td>
+                    <td>{{data.date}}</td>
+                </tr>
+
+                <tr *ngFor="let data of arrSumMonthlyReportData" id="total">
+                
+                    <td colspan="2">Total</td>
+                    <td>{{data.time_taken}}</td>
+                    <td>{{data.cal_burnt}}</td>
+                    <td></td>
+                </tr>
+                </table>
+                </div>
+                <div id="innerDiv">
+                    <button class="btn btn-danger" (click)="printReport()" id="generateReport">Print</button> 
+                    <button class="btn btn-info" id="generateGraph" (click)="show()">Generate Graph</button>
+                    <i class="fa fa-angle-double-up" (click)="scrollUp()" style="float:right; font-size:60px ;color:white" ></i>
+                </div>
+                </div>
+            </ng-template>
+
+            <ng-template #elseMonthlyBlock>
+                    <div *ngIf="showMonthlyData"  style="margin-top:5%">
+                        <h1 style="padding-bottom :50px;color:black;text-align:center"> You have'nt done any exercise today!!</h1>
+                    </div>
+            </ng-template>
+            
+    
+     
+    
+</div> 

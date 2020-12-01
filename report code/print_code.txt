@@ -1,0 +1,227 @@
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { HttpErrorResponse } from '@angular/common/http';
+import { Router } from '@angular/router';
+import { AUTO_STYLE } from '@angular/animations';
+
+
+@Component({
+  selector: 'app-report',
+  templateUrl: './report.component.html',
+  styleUrls: ['./report.component.css']
+})
+export class ReportComponent implements OnInit {
+ 
+
+  constructor(private httpService: HttpClient, private router: Router) {
+    
+   }
+
+  arrDailyReportData: any;
+  arrSumDailyReportData:any;
+  arrMonthlyReportData:any;
+  arrSumMonthlyReportData:any;
+  arrWeeklyReportData: any;
+  arrSumWeeklyReportData: any;
+  showDailyData:boolean=false;
+  showWeeklyData:boolean=false;
+  showMonthlyData:boolean=false;
+  email:string="abc@gmail.com";
+  display='none';
+  showIcon:boolean=false;
+  mySubscription:any;
+  skipLocationChange:boolean=true;
+  findData:boolean=true;
+   findMonthlyData:boolean=true;
+   findWeeklyData:boolean=true;
+  ngOnInit() {
+
+    //Daily Report Data
+    this.httpService.get("http://localhost:8086/report/daily/"+this.email).subscribe(
+    
+      responseDailyData=>{
+        this.arrDailyReportData = responseDailyData;//FILL THE ARRAY WITH DATA
+        if(this.arrDailyReportData.length==0){
+          this.findData=false;
+          console.log("No daily data found");
+        }
+        
+       },
+      (err: HttpErrorResponse) => {
+        console.log (err.message);
+      }
+    );
+
+      //Fetching total time and cal_burnt on daily basis
+    this.httpService.get("http://localhost:8086/report/daily/total/"+this.email).subscribe(
+    
+      responseSumDailyData=>{
+        this.arrSumDailyReportData = responseSumDailyData;//FILL THE ARRAY WITH DATA
+       },
+      (err: HttpErrorResponse) => {
+        console.log (err.message);
+      }
+    );
+
+
+
+      //Weekly Report data
+    this.httpService.get("http://localhost:8086/report/weekly/"+this.email).subscribe(
+      
+      responseWeeklyData=>{
+        this.arrWeeklyReportData = responseWeeklyData;//FILL THE ARRAY WITH DATA
+        if(this.arrWeeklyReportData.length==0){
+          this.findWeeklyData=false;
+          console.log("No weekly data found ");
+        }
+       },
+      (err: HttpErrorResponse) => {
+        console.log (err.message);
+      }
+    );
+
+    //Fetching total time and cal_burnt on weekly basis
+
+    this.httpService.get("http://localhost:8086/report/weekly/total/"+this.email).subscribe(
+    
+      responseSumWeeklyData=>{
+        this.arrSumWeeklyReportData = responseSumWeeklyData;//FILL THE ARRAY WITH DATA
+        
+       },
+      (err: HttpErrorResponse) => {
+        console.log (err.message);
+      }
+    );
+
+
+    //For Monthly Report
+
+    this.httpService.get("http://localhost:8086/report/monthly/"+this.email).subscribe(
+        
+      responseMonthlyData=>{
+        this.arrMonthlyReportData = responseMonthlyData;//FILL THE ARRAY WITH DATA
+        if(this.arrMonthlyReportData.length==0){
+          this.findMonthlyData=false;
+          console.log("No monthly data found");
+        }
+      },
+      (err: HttpErrorResponse) => {
+        console.log (err.message);
+      }
+    );
+
+    //Fetching total time and cal_burnt on weekly basis
+
+    this.httpService.get("http://localhost:8086/report/monthly/total/"+this.email).subscribe(
+    
+      responseSumMonthlyData=>{
+        this.arrSumMonthlyReportData = responseSumMonthlyData;//FILL THE ARRAY WITH DATA
+        
+       },
+      (err: HttpErrorResponse) => {
+        console.log (err.message);
+      }
+    );
+
+
+    let call = this;
+    $(document).ready(function(){
+      $('#dailyReport').click(function(){
+          call.scrollDown();
+      });
+      $('#weeklyReport').click(function(){
+          call.scrollDown();
+      });
+      $('#monthlyReport').click(function(){
+          call.scrollDown();
+      });
+      $('#iconDown').click(function(){
+        call.scrollDown();
+      });
+      
+    });
+
+
+
+    }
+    
+  
+  printReport() {
+  var sTable = document.getElementById('classResult').innerHTML;
+  var style = "<style>";
+  style = style + "table {width: 100%;font: 17px Calibri;}";
+  style = style + "table, th, td {border: solid 1px #DDD; border-collapse: collapse;";
+  style = style + "padding: 2px 3px;text-align: center;}";
+  style = style + "</style>";
+
+  // CREATE A WINDOW OBJECT.
+  var win = window.open('', '', 'height=800,width=1300');
+
+  win.document.write('<html><head>');
+  win.document.write('<title>Report</title>');   // <title> FOR PDF HEADER.
+  win.document.write(style);          // ADD STYLE INSIDE THE HEAD TAG.
+  win.document.write('</head>');
+  win.document.write('<body>');
+  win.document.write(sTable);         // THE TABLE CONTENTS INSIDE THE BODY TAG.
+  win.document.write('</body></html>');
+
+  win.document.close(); 	// CLOSE THE CURRENT WINDOW.
+
+  win.print();
+  }
+    
+
+  getDailyReport(){
+    console.log("Daily Report button clicked");
+    this.showDailyData=true;
+    this.showWeeklyData=false;
+    this.showMonthlyData=false;
+    this.showIcon=true;
+    
+  }
+
+
+  
+ 
+  getWeeklyReport(){
+    console.log("Weekly Report button clicked");
+    this.showDailyData=false;
+    this.showWeeklyData=true;
+    this.showMonthlyData=false;
+    this.showIcon=true;
+    
+  
+  }
+
+  
+  getMonthlyReport(){
+    console.log("Monthly Report button clicked");
+    this.showDailyData=false;
+    this.showWeeklyData=false;
+    this.showMonthlyData=true;
+    this.showIcon=true;
+    }
+      
+
+      
+  scrollDown(){
+    console.log("clicked");
+     //window.scrollTo(1, 100000);
+     //console.log("Daily Report button clicked");
+      document.body.scrollTop=700;
+     document.documentElement.scrollTop=700;
+   
+  }
+
+
+  show(){
+    this.router.navigateByUrl("/graph");
+  }
+
+  scrollUp(){
+    
+    document.body.scrollTop=0;
+    document.documentElement.scrollTop=0;
+  }
+
+}
